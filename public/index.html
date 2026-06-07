@@ -3,367 +3,423 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>AI Image Detector — Reality Defender</title>
+<title>AI Image Detector — Pro Edition</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Outfit:wght@500;700;800&display=swap" rel="stylesheet"/>
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#09090b;--bg2:#111113;--bg3:#1a1a1e;--bg4:#222226;
-  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);
-  --text:#f1f1f1;--muted:#7a7a85;--dim:#444450;
-  --purple:#9d8ff7;--purple-dk:#6c60d4;--purple-bg:rgba(157,143,247,0.08);
-  --green:#4ade80;--green-dk:#166534;--green-bg:rgba(74,222,128,0.09);
-  --red:#f87171;--red-dk:#7f1d1d;--red-bg:rgba(248,113,113,0.09);
-  --amber:#fbbf24;--amber-bg:rgba(251,191,36,0.09);
-  --teal:#2dd4bf;--blue:#60a5fa;
+*,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #030305; --bg-glass: rgba(10, 10, 15, 0.65);
+  --border: rgba(255, 255, 255, 0.08); --border-hover: rgba(255, 255, 255, 0.15);
+  --text: #ffffff; --muted: #8a8a98; --dim: #4d4d5e;
+  --accent: #8b5cf6; --accent-glow: rgba(139, 92, 246, 0.3);
+  --teal: #14b8a6; --teal-glow: rgba(20, 184, 166, 0.2);
+  --red: #ef4444; --red-bg: rgba(239, 68, 68, 0.1); --red-border: rgba(239, 68, 68, 0.3);
+  --green: #22c55e; --green-bg: rgba(34, 197, 94, 0.1); --green-border: rgba(34, 197, 94, 0.3);
+  --amber: #f59e0b; --amber-bg: rgba(245, 158, 11, 0.1); --amber-border: rgba(245, 158, 11, 0.3);
 }
-html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center}
+body {
+  background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif;
+  min-height: 100vh; display: flex; flex-direction: column; align-items: center;
+  overflow-x: hidden; position: relative;
+}
 
-/* ── Header ── */
-header{width:100%;padding:18px 32px;display:flex;align-items:center;justify-content:space-between;border-bottom:0.5px solid var(--border);position:sticky;top:0;z-index:99;background:rgba(9,9,11,0.85);backdrop-filter:blur(14px)}
-.logo{display:flex;align-items:center;gap:11px}
-.logo-icon{width:34px;height:34px;border-radius:9px;background:var(--purple-bg);border:0.5px solid var(--purple-dk);display:flex;align-items:center;justify-content:center;font-size:17px}
-.logo h1{font-size:16px;font-weight:700;letter-spacing:-0.3px}
-.logo p{font-size:10px;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-top:1px}
-.pill{display:flex;align-items:center;gap:7px;padding:5px 13px;border-radius:100px;border:0.5px solid var(--border2);background:var(--bg2);font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--muted)}
-.dot{width:7px;height:7px;border-radius:50%;background:var(--dim)}
-.dot.live{background:var(--green);box-shadow:0 0 6px var(--green)}
+/* Animated Mesh Background */
+.mesh-bg {
+  position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+  z-index: -1; overflow: hidden; pointer-events: none;
+}
+.blob {
+  position: absolute; filter: blur(120px); opacity: 0.5; border-radius: 50%;
+  animation: float 20s infinite alternate cubic-bezier(0.4, 0, 0.2, 1);
+}
+.blob-1 { width: 400px; height: 400px; background: var(--accent); top: -100px; left: -100px; }
+.blob-2 { width: 500px; height: 500px; background: var(--teal); bottom: -200px; right: -100px; animation-delay: -10s; }
+@keyframes float {
+  0% { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(100px, 150px) scale(1.2); }
+}
 
-/* ── Layout ── */
-main{width:100%;max-width:920px;padding:40px 20px 80px}
+/* Glass Header */
+header {
+  width: 100%; padding: 16px 40px; display: flex; align-items: center; justify-content: space-between;
+  background: rgba(3, 3, 5, 0.5); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 99;
+}
+.logo { display: flex; align-items: center; gap: 12px; }
+.logo-icon {
+  width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, var(--accent), var(--teal));
+  display: flex; align-items: center; justify-content: center; font-size: 18px; box-shadow: 0 0 15px var(--accent-glow);
+}
+.logo-text h1 { font-family: 'Outfit', sans-serif; font-size: 18px; font-weight: 800; letter-spacing: -0.5px; }
+.logo-text p { font-size: 11px; color: var(--muted); font-family: 'JetBrains Mono', monospace; }
 
-/* ── Hero ── */
-.hero{text-align:center;margin-bottom:44px}
-.badge{display:inline-flex;align-items:center;gap:7px;padding:5px 14px;border-radius:100px;border:0.5px solid var(--purple-dk);background:var(--purple-bg);font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--purple);margin-bottom:18px}
-.hero h2{font-size:clamp(26px,5vw,42px);font-weight:800;letter-spacing:-1.5px;line-height:1.1;margin-bottom:12px;background:linear-gradient(135deg,#f1f1f1 0%,#666 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.hero p{font-size:14px;color:var(--muted);max-width:420px;margin:0 auto;line-height:1.7}
+.status-pill {
+  display: flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 100px;
+  background: var(--bg-glass); border: 1px solid var(--border);
+  font-size: 12px; font-family: 'JetBrains Mono', monospace; color: var(--muted);
+}
+.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--dim); transition: 0.3s; }
+.dot.live { background: var(--green); box-shadow: 0 0 10px var(--green); }
 
-/* ── Protocol strip ── */
-.proto-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:32px}
-.proto{padding:13px 15px;background:var(--bg2);border:0.5px solid var(--border);border-radius:11px;display:flex;gap:11px}
-.pn{width:22px;height:22px;border-radius:50%;border:0.5px solid var(--border2);background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--purple);flex-shrink:0;margin-top:2px}
-.pt{font-size:12px;font-weight:600;margin-bottom:3px}
-.ps{font-size:10px;color:var(--muted);font-family:'JetBrains Mono',monospace;line-height:1.5}
+/* Main Layout */
+main { width: 100%; max-width: 960px; padding: 60px 20px 100px; position: relative; z-index: 1; }
 
-/* ── Drop zone ── */
-.drop-zone{border:1.5px dashed var(--border2);border-radius:15px;padding:52px 28px;text-align:center;cursor:pointer;transition:all .22s;background:var(--bg2);position:relative}
-.drop-zone:hover,.drop-zone.drag-over{border-color:var(--purple-dk);background:var(--purple-bg)}
-.drop-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
-.drop-icon{font-size:44px;margin-bottom:14px;opacity:.4}
-.drop-title{font-size:17px;font-weight:700;margin-bottom:7px}
-.drop-sub{font-size:12px;color:var(--muted);font-family:'JetBrains Mono',monospace}
+.hero { text-align: center; margin-bottom: 50px; }
+.hero-badge {
+  display: inline-flex; padding: 6px 16px; border-radius: 100px; border: 1px solid rgba(139, 92, 246, 0.3);
+  background: rgba(139, 92, 246, 0.05); color: #a78bfa; font-family: 'JetBrains Mono', monospace;
+  font-size: 12px; margin-bottom: 24px; box-shadow: 0 0 20px rgba(139, 92, 246, 0.1);
+}
+.hero h2 {
+  font-family: 'Outfit', sans-serif; font-size: clamp(32px, 6vw, 56px); font-weight: 800;
+  letter-spacing: -1.5px; line-height: 1.1; margin-bottom: 16px;
+  background: linear-gradient(to right, #ffffff, #a1a1aa); -webkit-background-clip: text; color: transparent;
+}
+.hero p { font-size: 16px; color: var(--muted); max-width: 480px; margin: 0 auto; line-height: 1.6; }
 
-/* ── Panel ── */
-#panel{display:none}
-.panel-grid{display:grid;grid-template-columns:265px 1fr;gap:18px;margin-bottom:20px}
-.img-card{background:var(--bg2);border:0.5px solid var(--border);border-radius:13px;overflow:hidden}
-.img-card img{width:100%;height:225px;object-fit:cover;display:block}
-.img-meta{padding:9px 13px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);border-top:0.5px solid var(--border);line-height:1.7}
-.run-btn{width:100%;margin:0;padding:11px;background:var(--purple-bg);border:0.5px solid var(--purple-dk);border-radius:9px;color:var(--purple);font-family:'Syne',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:8px}
-.run-btn:hover:not(:disabled){background:rgba(157,143,247,0.16)}
-.run-btn:disabled{opacity:.4;cursor:not-allowed}
-.btn-wrap{padding:10px 13px 13px}
+/* Glass Card System */
+.glass-card {
+  background: var(--bg-glass); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--border); border-radius: 20px; padding: 24px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
 
-/* ── Phases ── */
-.phases{display:flex;flex-direction:column;gap:9px}
-.phase{background:var(--bg2);border:0.5px solid var(--border);border-radius:11px;padding:13px 15px;transition:all .3s}
-.phase.active{border-color:var(--purple-dk);background:var(--purple-bg)}
-.phase.done{border-color:rgba(74,222,128,.3)}
-.phase.errored{border-color:rgba(248,113,113,.35)}
-.ph{display:flex;align-items:center;gap:9px}
-.pnum{width:22px;height:22px;border-radius:50%;background:var(--bg3);border:0.5px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--muted);flex-shrink:0}
-.phase.active .pnum{color:var(--purple);border-color:var(--purple-dk)}
-.phase.done .pnum{color:var(--green);border-color:rgba(74,222,128,.4)}
-.plabel{font-size:12px;font-weight:600;flex:1}
-.pst{font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--dim)}
-.pst.running{color:var(--purple)}
-.pst.done{color:var(--green)}
-.pst.err{color:var(--red)}
-.pdetail{margin-top:7px;padding-left:31px;font-size:10px;color:var(--muted);font-family:'JetBrains Mono',monospace;line-height:1.5;display:none}
-.phase.active .pdetail,.phase.done .pdetail{display:block}
+/* Drop Zone */
+.drop-zone {
+  border: 2px dashed var(--border); border-radius: 16px; padding: 60px 30px; text-align: center;
+  cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); position: relative;
+  background: rgba(255, 255, 255, 0.02);
+}
+.drop-zone:hover, .drop-zone.drag-over {
+  border-color: var(--accent); background: rgba(139, 92, 246, 0.05);
+  box-shadow: 0 0 30px var(--accent-glow) inset; transform: translateY(-2px);
+}
+.drop-zone input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+.drop-icon { font-size: 48px; margin-bottom: 16px; display: inline-block; transition: 0.3s; }
+.drop-zone:hover .drop-icon { transform: scale(1.1); filter: drop-shadow(0 0 10px var(--accent)); }
+.drop-title { font-family: 'Outfit', sans-serif; font-size: 20px; font-weight: 700; margin-bottom: 8px; color: #fff; }
+.drop-sub { font-size: 13px; color: var(--muted); font-family: 'JetBrains Mono', monospace; }
 
-/* ── Result ── */
-.result{background:var(--bg2);border:0.5px solid var(--border);border-radius:15px;overflow:hidden;animation:up .4s ease}
-@keyframes up{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-.rtop{padding:18px 22px;border-bottom:0.5px solid var(--border);display:flex;align-items:center;gap:18px;flex-wrap:wrap}
-.vbadge{padding:5px 16px;border-radius:100px;font-size:12px;font-weight:700;font-family:'JetBrains Mono',monospace;letter-spacing:.4px}
-.vbadge.ai{background:var(--red-bg);color:var(--red);border:0.5px solid var(--red-dk)}
-.vbadge.real{background:var(--green-bg);color:var(--green);border:0.5px solid var(--green-dk)}
-.vbadge.uncertain{background:var(--amber-bg);color:var(--amber);border:0.5px solid #78350f}
-.vbadge.analyzing{background:var(--purple-bg);color:var(--purple);border:0.5px solid var(--purple-dk)}
-.confwrap{flex:1;min-width:160px}
-.conflabels{display:flex;justify-content:space-between;font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--muted);margin-bottom:5px}
-.confbar{height:5px;background:var(--bg3);border-radius:3px;overflow:hidden}
-.conffill{height:100%;border-radius:3px;transition:width 1.3s cubic-bezier(.4,0,.2,1)}
-.conffill.ai{background:var(--red)}
-.conffill.real{background:var(--green)}
-.conffill.uncertain{background:var(--amber)}
-.rid{font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--dim)}
+/* Panel Layout */
+#panel { display: none; animation: fadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-/* ── Result body ── */
-.rbody{padding:18px 22px}
-.sec-label{font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--dim);text-transform:uppercase;letter-spacing:.8px;margin-bottom:9px}
-.models-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:8px;margin-bottom:18px}
-.model-chip{background:var(--bg3);border:0.5px solid var(--border);border-radius:9px;padding:10px 12px}
-.mc-name{font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--muted);margin-bottom:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.mc-row{display:flex;align-items:center;justify-content:space-between;gap:6px}
-.mc-status{font-size:11px;font-weight:600}
-.mc-status.ai{color:var(--red)}
-.mc-status.real{color:var(--green)}
-.mc-status.na{color:var(--dim)}
-.mc-score{font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--muted)}
-.mini-bar{height:3px;background:var(--bg);border-radius:2px;overflow:hidden;margin-top:5px}
-.mini-fill{height:100%;border-radius:2px}
-.mini-fill.ai{background:var(--red)}
-.mini-fill.real{background:var(--green)}
+.panel-grid { display: grid; grid-template-columns: 320px 1fr; gap: 24px; margin-bottom: 24px; }
+@media (max-width: 768px) { .panel-grid { grid-template-columns: 1fr; } }
 
-.summary-box{padding:14px 16px;background:var(--bg3);border:0.5px solid var(--border);border-left:2px solid var(--purple-dk);border-radius:9px;font-size:12px;color:var(--muted);line-height:1.7}
-.summary-box strong{color:var(--text);font-weight:600}
+/* Image Preview Card */
+.img-preview-wrap { border-radius: 16px; overflow: hidden; background: rgba(0,0,0,0.5); border: 1px solid var(--border); }
+.img-preview-wrap img { width: 100%; height: 260px; object-fit: cover; display: block; }
+.img-meta { padding: 12px 16px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); border-top: 1px solid var(--border); }
+.run-btn {
+  width: 100%; margin-top: 12px; padding: 16px; border-radius: 12px;
+  background: linear-gradient(135deg, var(--accent), #6d28d9); border: none;
+  color: white; font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 700;
+  cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 10px;
+  box-shadow: 0 10px 20px var(--accent-glow);
+}
+.run-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 15px 25px var(--accent-glow); }
+.run-btn:disabled { background: var(--bg-glass); border: 1px solid var(--border); color: var(--muted); box-shadow: none; cursor: not-allowed; }
 
-/* ── Utilities ── */
-.spin{width:13px;height:13px;border:2px solid var(--border2);border-top-color:var(--purple);border-radius:50%;animation:spin .6s linear infinite;display:inline-block;flex-shrink:0}
-@keyframes spin{to{transform:rotate(360deg)}}
-.err-box{padding:13px 16px;background:var(--red-bg);border:0.5px solid var(--red-dk);border-radius:9px;font-size:12px;color:var(--red);font-family:'JetBrains Mono',monospace;margin:14px 0}
-.reset-btn{background:none;border:none;color:var(--muted);font-size:11px;font-family:'JetBrains Mono',monospace;cursor:pointer;display:flex;align-items:center;gap:6px;margin-top:18px;padding:0;transition:color .15s}
-.reset-btn:hover{color:var(--text)}
-@media(max-width:620px){.panel-grid{grid-template-columns:1fr}.proto-strip{grid-template-columns:1fr}}
+/* Processing Phases */
+.phases { display: flex; flex-direction: column; gap: 12px; }
+.phase {
+  background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border); border-radius: 12px;
+  padding: 16px 20px; transition: all 0.3s; position: relative; overflow: hidden;
+}
+.phase::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: transparent; transition: 0.3s;
+}
+.phase.active { background: rgba(139, 92, 246, 0.05); border-color: rgba(139, 92, 246, 0.3); }
+.phase.active::before { background: var(--accent); box-shadow: 0 0 10px var(--accent); }
+.phase.done { border-color: var(--green-border); background: var(--green-bg); }
+.phase.done::before { background: var(--green); }
+.phase.errored { border-color: var(--red-border); background: var(--red-bg); }
+.phase.errored::before { background: var(--red); }
+
+.ph-top { display: flex; align-items: center; justify-content: space-between; }
+.ph-label { font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 600; color: #fff; }
+.ph-status { font-family: 'JetBrains Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; }
+.phase.active .ph-status { color: var(--accent); }
+.phase.done .ph-status { color: var(--green); }
+.phase.errored .ph-status { color: var(--red); }
+.ph-desc { margin-top: 8px; font-size: 12px; color: var(--muted); line-height: 1.5; display: none; }
+.phase.active .ph-desc, .phase.done .ph-desc { display: block; animation: fadeUp 0.3s ease; }
+
+/* Dashboard Results */
+.res-card {
+  animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.res-header {
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;
+  padding-bottom: 20px; border-bottom: 1px solid var(--border); margin-bottom: 24px;
+}
+.verdict-badge {
+  padding: 8px 24px; border-radius: 100px; font-family: 'Outfit', sans-serif; font-size: 18px; font-weight: 800;
+  display: inline-flex; align-items: center; gap: 10px; letter-spacing: 0.5px; text-transform: uppercase;
+}
+.verdict-badge.ai { background: var(--red-bg); color: var(--red); border: 1px solid var(--red-border); box-shadow: 0 0 20px rgba(239, 68, 68, 0.2); }
+.verdict-badge.real { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); box-shadow: 0 0 20px rgba(34, 197, 94, 0.2); }
+.verdict-badge.analyzing { background: rgba(139, 92, 246, 0.1); color: var(--accent); border: 1px solid rgba(139, 92, 246, 0.3); }
+
+.conf-wrap { flex: 1; min-width: 200px; max-width: 300px; }
+.conf-header { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); margin-bottom: 8px; }
+.conf-bar-bg { height: 6px; background: rgba(255, 255, 255, 0.05); border-radius: 10px; overflow: hidden; }
+.conf-bar-fill { height: 100%; border-radius: 10px; transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1); width: 0%; }
+.conf-bar-fill.ai { background: linear-gradient(90deg, #f87171, #dc2626); box-shadow: 0 0 10px #ef4444; }
+.conf-bar-fill.real { background: linear-gradient(90deg, #4ade80, #16a34a); box-shadow: 0 0 10px #22c55e; }
+
+/* Models Grid */
+.sec-title { font-family: 'Outfit', sans-serif; font-size: 14px; color: #fff; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+.sec-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+.models-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; margin-bottom: 24px; }
+.model-card {
+  background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border); border-radius: 12px; padding: 16px;
+  transition: 0.2s;
+}
+.model-card:hover { background: rgba(255, 255, 255, 0.04); border-color: var(--border-hover); }
+.mc-name { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); margin-bottom: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mc-stats { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+.mc-verdict { font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 700; }
+.mc-verdict.ai { color: var(--red); }
+.mc-verdict.real { color: var(--green); }
+.mc-verdict.na { color: var(--dim); }
+.mc-score { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #fff; }
+
+.summary-box {
+  background: rgba(139, 92, 246, 0.05); border: 1px solid rgba(139, 92, 246, 0.2);
+  border-left: 3px solid var(--accent); border-radius: 12px; padding: 20px;
+  font-size: 14px; color: #e4e4e7; line-height: 1.8;
+}
+.summary-box strong { color: #fff; font-weight: 600; }
+
+.reset-btn {
+  background: none; border: 1px solid var(--border); border-radius: 100px; padding: 10px 24px;
+  color: var(--muted); font-family: 'JetBrains Mono', monospace; font-size: 12px;
+  cursor: pointer; display: inline-flex; align-items: center; gap: 8px; margin-top: 24px;
+  transition: all 0.2s;
+}
+.reset-btn:hover { background: var(--text); color: var(--bg); border-color: var(--text); }
+.err-box { padding: 16px; background: var(--red-bg); border: 1px solid var(--red-border); border-radius: 12px; color: #fca5a5; font-family: 'JetBrains Mono', monospace; font-size: 13px; margin: 16px 0; }
+
+/* Loader */
+.spin {
+  width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.2);
+  border-top-color: #fff; border-radius: 50%; animation: spin 0.8s linear infinite; display: inline-block;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
 </style>
 </head>
 <body>
 
+<div class="mesh-bg">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+</div>
+
 <header>
   <div class="logo">
     <div class="logo-icon">🛡</div>
-    <div>
-      <h1>AI Image Detector</h1>
-      <p>powered by Reality Defender</p>
+    <div class="logo-text">
+      <h1>Reality Defender</h1>
+      <p>PRO FORENSICS</p>
     </div>
   </div>
-  <div class="pill">
+  <div class="status-pill">
     <div class="dot" id="dot"></div>
-    <span id="srv-status">connecting...</span>
+    <span id="srv-status">Connecting API...</span>
   </div>
 </header>
 
 <main>
-  <div class="hero">
-    <div class="badge">⚡ Reality Defender API · Professional Detection Engine</div>
-    <h2>Real image or<br>AI generated?</h2>
-    <p>Upload any image and our multi-model forensic engine detects synthetic media in seconds.</p>
-  </div>
-
-  <div class="proto-strip">
-    <div class="proto"><div class="pn">1</div><div><div class="pt">Upload & Sign</div><div class="ps">Secure signed URL · temp file upload</div></div></div>
-    <div class="proto"><div class="pn">2</div><div><div class="pt">Multi-model Analysis</div><div class="ps">Parallel detection engines scan image</div></div></div>
-    <div class="proto"><div class="pn">3</div><div><div class="pt">Verdict & Score</div><div class="ps">Confidence score + per-model breakdown</div></div></div>
-  </div>
-
-  <!-- Upload -->
   <div id="upload-wrap">
-    <div class="drop-zone" id="dz">
+    <div class="hero">
+      <div class="hero-badge">⚡ Advanced Multi-Model Architecture</div>
+      <h2>Detect the undetectable.</h2>
+      <p>Upload media to our enterprise-grade forensic engine. We run parallel deepfake detection models to verify authenticity with unparalleled accuracy.</p>
+    </div>
+
+    <div class="drop-zone glass-card" id="dz">
       <input type="file" id="fi" accept="image/jpeg,image/png,image/gif,image/webp"/>
-      <div class="drop-icon">📷</div>
-      <div class="drop-title">Drop image here or click to browse</div>
-      <div class="drop-sub">JPEG · PNG · WebP · GIF &nbsp;—&nbsp; max 50 MB</div>
+      <div class="drop-icon">✨</div>
+      <div class="drop-title">Drop your image to scan</div>
+      <div class="drop-sub">JPEG, PNG, WebP or GIF up to 50MB</div>
     </div>
   </div>
 
-  <!-- Analysis panel -->
   <div id="panel">
     <div class="panel-grid">
-      <div class="img-card">
-        <img id="prev" src="" alt="Preview"/>
-        <div class="img-meta" id="imeta">—</div>
-        <div class="btn-wrap"><button class="run-btn" id="runbtn">🔍 Analyze with Reality Defender</button></div>
+      <div>
+        <div class="img-preview-wrap glass-card" style="padding:0">
+          <img id="prev" src="" alt="Preview"/>
+          <div class="img-meta" id="imeta">—</div>
+        </div>
+        <button class="run-btn" id="runbtn">Initiate Deep Scan</button>
       </div>
 
       <div class="phases">
-        <div class="phase" id="ph1">
-          <div class="ph"><div class="pnum">1</div><div class="plabel">Upload to Reality Defender</div><div class="pst" id="ps1">idle</div></div>
-          <div class="pdetail">Getting signed URL, writing temp file, uploading securely to RD servers...</div>
+        <div class="phase glass-card" id="ph1">
+          <div class="ph-top">
+            <div class="ph-label">1. Secure Uplink</div>
+            <div class="ph-status" id="ps1">Idle</div>
+          </div>
+          <div class="ph-desc">Establishing encrypted connection and transferring payload to Reality Defender servers...</div>
         </div>
-        <div class="phase" id="ph2">
-          <div class="ph"><div class="pnum">2</div><div class="plabel">Multi-model Detection</div><div class="pst" id="ps2">idle</div></div>
-          <div class="pdetail">Running parallel AI detection models — GAN detector, diffusion classifier, frequency analysis, biological triaging...</div>
+        <div class="phase glass-card" id="ph2">
+          <div class="ph-top">
+            <div class="ph-label">2. Parallel Execution</div>
+            <div class="ph-status" id="ps2">Idle</div>
+          </div>
+          <div class="ph-desc">Running artifact detection, diffusion classifiers, and biological triaging across 7 core models...</div>
         </div>
-        <div class="phase" id="ph3">
-          <div class="ph"><div class="pnum">3</div><div class="plabel">Collecting Results</div><div class="pst" id="ps3">idle</div></div>
-          <div class="pdetail">Polling Reality Defender API for final verdict and per-model confidence scores...</div>
+        <div class="phase glass-card" id="ph3">
+          <div class="ph-top">
+            <div class="ph-label">3. Compiling Telemetry</div>
+            <div class="ph-status" id="ps3">Idle</div>
+          </div>
+          <div class="ph-desc">Aggregating confidence scores and normalizing final cryptographic verdict...</div>
         </div>
       </div>
     </div>
 
     <div id="err-area"></div>
     <div id="res-area"></div>
-    <button class="reset-btn" onclick="reset()">← analyze another image</button>
+    <div style="text-align:center"><button class="reset-btn" onclick="reset()">← New Scan</button></div>
   </div>
 </main>
 
 <script>
-// ── Health check ──────────────────────────────────────────────────────────────
+// Backend health check
 (async()=>{
-  try{
-    const r=await fetch('/api/health');
-    const d=await r.json();
-    if(d.status==='ok'){
+  try {
+    const r = await fetch('/api/health');
+    const d = await r.json();
+    if(d.status === 'ok') {
       document.getElementById('dot').classList.add('live');
-      document.getElementById('srv-status').textContent='server online';
+      document.getElementById('srv-status').textContent = 'API ONLINE';
     }
-  }catch{document.getElementById('srv-status').textContent='offline';}
+  } catch {
+    document.getElementById('srv-status').textContent = 'OFFLINE (NO BACKEND)';
+  }
 })();
 
-// ── State ─────────────────────────────────────────────────────────────────────
-let file=null, busy=false;
-const dz=document.getElementById('dz');
-const fi=document.getElementById('fi');
-const runbtn=document.getElementById('runbtn');
+let file = null, busy = false;
+const dz = document.getElementById('dz');
+const fi = document.getElementById('fi');
+const runbtn = document.getElementById('runbtn');
 
-// ── Drag & drop ───────────────────────────────────────────────────────────────
-dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('drag-over')});
-dz.addEventListener('dragleave',()=>dz.classList.remove('drag-over'));
-dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('drag-over');if(e.dataTransfer.files[0])load(e.dataTransfer.files[0])});
-fi.addEventListener('change',()=>{if(fi.files[0])load(fi.files[0])});
+// Drag Events
+dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag-over'); });
+dz.addEventListener('dragleave', () => dz.classList.remove('drag-over'));
+dz.addEventListener('drop', e => { e.preventDefault(); dz.classList.remove('drag-over'); if(e.dataTransfer.files[0]) load(e.dataTransfer.files[0]); });
+fi.addEventListener('change', () => { if(fi.files[0]) load(fi.files[0]); });
 
-function load(f){
-  const allowed=['image/jpeg','image/png','image/gif','image/webp'];
-  if(!allowed.includes(f.type)){alert('Please select a JPEG, PNG, GIF, or WebP image.');return;}
-  file=f;
-  const reader=new FileReader();
-  reader.onload=e=>{
-    document.getElementById('prev').src=e.target.result;
-    document.getElementById('imeta').textContent=
-      `${f.name.substring(0,30)} · ${(f.size/1024).toFixed(1)} KB · ${f.type.split('/')[1].toUpperCase()}`;
-    document.getElementById('upload-wrap').style.display='none';
-    document.getElementById('panel').style.display='block';
-    document.getElementById('res-area').innerHTML='';
-    document.getElementById('err-area').innerHTML='';
-    resetPhases();
+function load(f) {
+  const allowed = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+  if(!allowed.includes(f.type)) { alert('Invalid file type.'); return; }
+  file = f;
+  const reader = new FileReader();
+  reader.onload = e => {
+    document.getElementById('prev').src = e.target.result;
+    document.getElementById('imeta').textContent = `${f.name.substring(0,25)} • ${(f.size/1024).toFixed(1)} KB • ${f.type.split('/')[1].toUpperCase()}`;
+    document.getElementById('upload-wrap').style.display = 'none';
+    document.getElementById('panel').style.display = 'block';
+    document.getElementById('res-area').innerHTML = '';
+    document.getElementById('err-area').innerHTML = '';
+    [1,2,3].forEach(n => ph(n, 'idle', 'Idle'));
   };
   reader.readAsDataURL(f);
 }
 
-// ── Phase helpers ─────────────────────────────────────────────────────────────
-function ph(n,state,txt){
-  const card=document.getElementById('ph'+n);
-  const st=document.getElementById('ps'+n);
-  card.className='phase '+(state==='active'||state==='done'||state==='errored'?state:'');
-  st.className='pst '+(state==='active'?'running':state==='done'?'done':state==='errored'?'err':'');
-  st.innerHTML=state==='active'?'<span class="spin"></span>':state==='done'?'✓ done':state==='errored'?'✗ error':(txt||'idle');
+function ph(n, state, txt) {
+  const card = document.getElementById('ph'+n);
+  const st = document.getElementById('ps'+n);
+  card.className = 'phase glass-card ' + (state !== 'idle' ? state : '');
+  st.innerHTML = state === 'active' ? '<span class="spin"></span>' : txt;
 }
-function resetPhases(){[1,2,3].forEach(n=>ph(n,'idle'))}
 
-// ── Analyze ───────────────────────────────────────────────────────────────────
-runbtn.addEventListener('click',()=>{if(!file||busy)return;analyze()});
+runbtn.addEventListener('click', () => { if(!file || busy) return; analyze(); });
 
-async function analyze(){
-  busy=true;
-  runbtn.disabled=true;
-  runbtn.innerHTML='<span class="spin"></span> Analyzing...';
-  document.getElementById('err-area').innerHTML='';
-  document.getElementById('res-area').innerHTML='';
+async function analyze() {
+  busy = true; runbtn.disabled = true; runbtn.innerHTML = '<span class="spin"></span> Running...';
+  document.getElementById('err-area').innerHTML = ''; document.getElementById('res-area').innerHTML = '';
 
-  ph(1,'active'); ph(2,'idle'); ph(3,'idle');
-  // Brief pause so user sees phase 1 start
-  await delay(300);
+  ph(1, 'active'); ph(2, 'idle', 'Waiting'); ph(3, 'idle', 'Waiting');
+  await new Promise(r => setTimeout(r, 400));
+  ph(1, 'done', 'Verified'); ph(2, 'active');
+  await new Promise(r => setTimeout(r, 600));
+  ph(2, 'done', 'Complete'); ph(3, 'active');
 
-  ph(1,'done'); ph(2,'active');
-  await delay(400);
-  ph(2,'done'); ph(3,'active');
+  try {
+    const fd = new FormData(); fd.append('image', file);
+    const resp = await fetch('/api/analyze', { method: 'POST', body: fd });
+    
+    // Check if response is HTML (GitHub Pages 404 error scenario)
+    const contentType = resp.headers.get("content-type");
+    if (contentType && contentType.includes("text/html")) {
+        throw new Error("Backend offline. GitHub Pages is returning a 404 HTML page instead of JSON API data.");
+    }
 
-  try{
-    const fd=new FormData();
-    fd.append('image',file);
+    const data = await resp.json();
+    if(!resp.ok || data.error) throw new Error(data.error || 'Unknown error');
 
-    const resp=await fetch('/api/analyze',{method:'POST',body:fd});
-    const data=await resp.json();
-
-    if(!resp.ok||data.error) throw new Error(data.error||'Unknown error');
-
-    ph(3,'done');
+    ph(3, 'done', 'Finalized');
     render(data);
-
-  }catch(e){
-    ph(3,'errored');
-    document.getElementById('err-area').innerHTML=
-      `<div class="err-box">⚠ ${e.message}</div>`;
+  } catch(e) {
+    ph(3, 'errored', 'Failed');
+    document.getElementById('err-area').innerHTML = `<div class="err-box">⚠ Analysis Failed: ${e.message}</div>`;
   }
-
-  busy=false;
-  runbtn.disabled=false;
-  runbtn.innerHTML='🔄 Re-analyze';
+  busy = false; runbtn.disabled = false; runbtn.innerHTML = 'Initiate Deep Scan';
 }
 
-// ── Render result ─────────────────────────────────────────────────────────────
-function render(d){
-  const vc=d.verdict==='AI_GENERATED'?'ai':d.verdict==='REAL'?'real':'uncertain';
-  const vl=d.verdict==='AI_GENERATED'?'🤖 AI Generated':d.verdict==='REAL'?'📷 Real Photo':d.verdict==='ANALYZING'?'⏳ Still Analyzing':'⚠ Uncertain';
-  const conf=d.confidence??null;
-  const confDisp=conf!=null?`${conf}%`:'—';
+function render(d) {
+  const isAI = d.verdict === 'AI_GENERATED';
+  const isReal = d.verdict === 'REAL';
+  const vc = isAI ? 'ai' : isReal ? 'real' : 'analyzing';
+  const vl = isAI ? '⚠ SYNTHETIC MEDIA DETECTED' : isReal ? '✓ AUTHENTIC MEDIA' : '⚠ UNCERTAIN';
+  const conf = d.confidence ?? 0;
 
-  // Per-model cards
-  const modelCards=(d.models||[]).map(m=>{
-    const ms=m.status==='MANIPULATED'||m.status==='FAKE'?'ai':m.status==='REAL'?'real':'na';
-    const ml=m.status==='MANIPULATED'?'AI':'REAL'===m.status?'Real':'N/A';
-    const sc=m.score!=null?m.score:null;
-    const scDisp=sc!=null?`${sc}%`:'—';
-    const fillPct=sc??0;
-    return `<div class="model-chip">
-      <div class="mc-name" title="${m.name}">${m.name}</div>
-      <div class="mc-row"><span class="mc-status ${ms}">${ml}</span><span class="mc-score">${scDisp}</span></div>
-      <div class="mini-bar"><div class="mini-fill ${ms}" style="width:${fillPct}%"></div></div>
+  const modelCards = (d.models || []).map(m => {
+    const ms = m.status === 'MANIPULATED' || m.status === 'FAKE' ? 'ai' : m.status === 'REAL' ? 'real' : 'na';
+    const ml = ms === 'ai' ? 'DETECTED' : ms === 'real' ? 'CLEAN' : 'N/A';
+    return `<div class="model-card">
+      <div class="mc-name">${m.name}</div>
+      <div class="mc-stats">
+        <span class="mc-verdict ${ms}">${ml}</span>
+        <span class="mc-score">${m.score != null ? m.score + '%' : '—'}</span>
+      </div>
+      <div class="conf-bar-bg" style="height:4px"><div class="conf-bar-fill ${ms}" style="width:${m.score||0}%"></div></div>
     </div>`;
   }).join('');
 
-  // Summary sentence
-  const aiCount=(d.models||[]).filter(m=>m.status==='MANIPULATED'||m.status==='FAKE').length;
-  const total=(d.models||[]).filter(m=>m.status!=='NOT_APPLICABLE').length;
-  const summary=conf!=null
-    ? `Reality Defender's ensemble of <strong>${total} detection model${total!==1?'s':''}</strong> analysed this image. `
-      + (d.verdict==='AI_GENERATED'
-        ? `<strong>${aiCount} of ${total}</strong> models flagged it as AI-generated with a combined confidence of <strong>${conf}%</strong>. The image exhibits synthetic media characteristics consistent with a modern generative model.`
-        : d.verdict==='REAL'
-        ? `All active models classify this as an authentic photograph (score: <strong>${conf}%</strong> synthetic probability — below detection threshold). No significant AI generation artifacts were detected.`
-        : `Results are inconclusive — detection confidence is insufficient to render a definitive verdict. Consider re-uploading a higher-resolution version.`)
-    : 'Analysis complete. See per-model results above.';
+  const summary = isAI ? `Forensic analysis indicates this media was generated or heavily manipulated by an AI model. Confidence score is critically high at <strong>${conf}%</strong>.` : isReal ? `Our models found no trace of generative AI manipulation. The artifact structure is consistent with an authentic capture.` : `Results are mixed or inconclusive. Manual review is recommended.`;
 
-  document.getElementById('res-area').innerHTML=`
-  <div class="result">
-    <div class="rtop">
-      <div class="vbadge ${vc}">${vl}</div>
-      <div class="confwrap">
-        <div class="conflabels"><span>AI Probability Score</span><span>${confDisp}</span></div>
-        <div class="confbar"><div class="conffill ${vc}" id="cf" style="width:0%"></div></div>
+  document.getElementById('res-area').innerHTML = `
+  <div class="glass-card res-card">
+    <div class="res-header">
+      <div class="verdict-badge ${vc}">${vl}</div>
+      <div class="conf-wrap">
+        <div class="conf-header"><span>SYNTHETIC PROBABILITY</span><span>${conf}%</span></div>
+        <div class="conf-bar-bg"><div class="conf-bar-fill ${vc}" id="cf" style="width:0%"></div></div>
       </div>
-      <div class="rid">ID: ${(d.requestId||'—').substring(0,14)}...</div>
     </div>
-    <div class="rbody">
-      ${modelCards?`<div class="sec-label" style="margin-bottom:10px">Detection Models (${(d.models||[]).length} active)</div><div class="models-grid">${modelCards}</div>`:''}
-      <div class="sec-label">Analysis Summary</div>
-      <div class="summary-box">${summary}</div>
-    </div>
+    <div class="sec-title">MODEL TELEMETRY</div>
+    <div class="models-grid">${modelCards || '<div style="color:var(--muted);font-size:12px">No model breakdown available.</div>'}</div>
+    <div class="summary-box"><strong>EXECUTIVE SUMMARY:</strong><br>${summary}</div>
   </div>`;
 
-  setTimeout(()=>{
-    const cf=document.getElementById('cf');
-    if(cf&&conf!=null)cf.style.width=conf+'%';
-  },80);
+  setTimeout(() => { const cf = document.getElementById('cf'); if(cf) cf.style.width = conf + '%'; }, 100);
 }
 
-function reset(){
-  file=null;busy=false;
-  document.getElementById('panel').style.display='none';
-  document.getElementById('upload-wrap').style.display='block';
-  document.getElementById('res-area').innerHTML='';
-  document.getElementById('err-area').innerHTML='';
-  runbtn.innerHTML='🔍 Analyze with Reality Defender';
-  runbtn.disabled=false;
-  fi.value='';
-  resetPhases();
+function reset() {
+  file = null; busy = false;
+  document.getElementById('panel').style.display = 'none';
+  document.getElementById('upload-wrap').style.display = 'block';
+  document.getElementById('res-area').innerHTML = '';
+  document.getElementById('err-area').innerHTML = '';
+  fi.value = '';
 }
-
-function delay(ms){return new Promise(r=>setTimeout(r,ms))}
 </script>
 </body>
 </html>
