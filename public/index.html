@@ -353,7 +353,7 @@
                 
                 // Calculate file size in KB
                 const sizeKB = (file.size / 1024).toFixed(1);
-                fileDetails.textContent = \`Filename: \${file.name} | Size: \${sizeKB} KB\`;
+                fileDetails.textContent = `Filename: ${file.name} | Size: ${sizeKB} KB`;
                 
                 // Update UI state
                 uploadSection.style.display = 'none';
@@ -451,7 +451,7 @@
                 
                 progressBar.className = "progress-bar"; // Red color
                 
-                summaryText.innerHTML = \`Based on our forensic analysis, this image was likely generated or manipulated by AI. <br> The system calculates a <strong>\${confidence}%</strong> probability of it being synthetic.\`;
+                summaryText.innerHTML = `Based on our forensic analysis, this image was likely generated or manipulated by AI. <br> The system calculates a <strong>${confidence}%</strong> probability of it being synthetic.`;
             
             } else if (verdict === 'REAL') {
                 verdictBox.textContent = "✓ HUMAN MADE (AUTHENTIC)";
@@ -459,7 +459,7 @@
                 
                 progressBar.className = "progress-bar safe"; // Green color
                 
-                summaryText.innerHTML = \`Our models found no major signs of AI manipulation. <br> The artifact structure is consistent with a standard, human-made photograph.\`;
+                summaryText.innerHTML = `Our models found no major signs of AI manipulation. <br> The artifact structure is consistent with a standard, human-made photograph.`;
             
             } else {
                 verdictBox.textContent = "⚠ UNCERTAIN RESULTS";
@@ -479,7 +479,7 @@
             
             if (models.length === 0) {
                 const tr = document.createElement('tr');
-                tr.innerHTML = \`<td colspan="3" style="text-align:center;">No individual model data available.</td>\`;
+                tr.innerHTML = `<td colspan="3" style="text-align:center;">No individual model data available.</td>`;
                 modelsTableBody.appendChild(tr);
             } else {
                 for (let i = 0; i < models.length; i++) {
@@ -501,11 +501,11 @@
 
                     // Create the row
                     const tr = document.createElement('tr');
-                    tr.innerHTML = \`
-                        <td>\${model.name}</td>
-                        <td style="font-weight: bold; color: \${statusColor}">\${statusText}</td>
-                        <td>\${scoreText}</td>
-                    \`;
+                    tr.innerHTML = `
+                        <td>${model.name}</td>
+                        <td style="font-weight: bold; color: ${statusColor}">${statusText}</td>
+                        <td>${scoreText}</td>
+                    `;
                     modelsTableBody.appendChild(tr);
                 }
             }
