@@ -1,425 +1,518 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>AI Image Detector — Pro Edition</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Outfit:wght@500;700;800&display=swap" rel="stylesheet"/>
-<style>
-*,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
-:root {
-  --bg: #030305; --bg-glass: rgba(10, 10, 15, 0.65);
-  --border: rgba(255, 255, 255, 0.08); --border-hover: rgba(255, 255, 255, 0.15);
-  --text: #ffffff; --muted: #8a8a98; --dim: #4d4d5e;
-  --accent: #8b5cf6; --accent-glow: rgba(139, 92, 246, 0.3);
-  --teal: #14b8a6; --teal-glow: rgba(20, 184, 166, 0.2);
-  --red: #ef4444; --red-bg: rgba(239, 68, 68, 0.1); --red-border: rgba(239, 68, 68, 0.3);
-  --green: #22c55e; --green-bg: rgba(34, 197, 94, 0.1); --green-border: rgba(34, 197, 94, 0.3);
-  --amber: #f59e0b; --amber-bg: rgba(245, 158, 11, 0.1); --amber-border: rgba(245, 158, 11, 0.3);
-}
-body {
-  background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif;
-  min-height: 100vh; display: flex; flex-direction: column; align-items: center;
-  overflow-x: hidden; position: relative;
-}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Image Detection System</title>
+    <!-- Basic Google Font for clean readability -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* General Reset and Styling */
+        body {
+            font-family: 'Roboto', Arial, sans-serif;
+            background-color: #f4f6f9;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
 
-/* Animated Mesh Background */
-.mesh-bg {
-  position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-  z-index: -1; overflow: hidden; pointer-events: none;
-}
-.blob {
-  position: absolute; filter: blur(120px); opacity: 0.5; border-radius: 50%;
-  animation: float 20s infinite alternate cubic-bezier(0.4, 0, 0.2, 1);
-}
-.blob-1 { width: 400px; height: 400px; background: var(--accent); top: -100px; left: -100px; }
-.blob-2 { width: 500px; height: 500px; background: var(--teal); bottom: -200px; right: -100px; animation-delay: -10s; }
-@keyframes float {
-  0% { transform: translate(0, 0) scale(1); }
-  100% { transform: translate(100px, 150px) scale(1.2); }
-}
+        /* Header Styling */
+        header {
+            background-color: #0056b3;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
 
-/* Glass Header */
-header {
-  width: 100%; padding: 16px 40px; display: flex; align-items: center; justify-content: space-between;
-  background: rgba(3, 3, 5, 0.5); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 99;
-}
-.logo { display: flex; align-items: center; gap: 12px; }
-.logo-icon {
-  width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, var(--accent), var(--teal));
-  display: flex; align-items: center; justify-content: center; font-size: 18px; box-shadow: 0 0 15px var(--accent-glow);
-}
-.logo-text h1 { font-family: 'Outfit', sans-serif; font-size: 18px; font-weight: 800; letter-spacing: -0.5px; }
-.logo-text p { font-size: 11px; color: var(--muted); font-family: 'JetBrains Mono', monospace; }
+        header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
 
-.status-pill {
-  display: flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 100px;
-  background: var(--bg-glass); border: 1px solid var(--border);
-  font-size: 12px; font-family: 'JetBrains Mono', monospace; color: var(--muted);
-}
-.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--dim); transition: 0.3s; }
-.dot.live { background: var(--green); box-shadow: 0 0 10px var(--green); }
+        /* Main Container */
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
 
-/* Main Layout */
-main { width: 100%; max-width: 960px; padding: 60px 20px 100px; position: relative; z-index: 1; }
+        /* Instructions Text */
+        .instructions {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #555;
+        }
 
-.hero { text-align: center; margin-bottom: 50px; }
-.hero-badge {
-  display: inline-flex; padding: 6px 16px; border-radius: 100px; border: 1px solid rgba(139, 92, 246, 0.3);
-  background: rgba(139, 92, 246, 0.05); color: #a78bfa; font-family: 'JetBrains Mono', monospace;
-  font-size: 12px; margin-bottom: 24px; box-shadow: 0 0 20px rgba(139, 92, 246, 0.1);
-}
-.hero h2 {
-  font-family: 'Outfit', sans-serif; font-size: clamp(32px, 6vw, 56px); font-weight: 800;
-  letter-spacing: -1.5px; line-height: 1.1; margin-bottom: 16px;
-  background: linear-gradient(to right, #ffffff, #a1a1aa); -webkit-background-clip: text; color: transparent;
-}
-.hero p { font-size: 16px; color: var(--muted); max-width: 480px; margin: 0 auto; line-height: 1.6; }
+        /* Upload Area */
+        .upload-area {
+            border: 2px dashed #0056b3;
+            border-radius: 8px;
+            padding: 40px;
+            text-align: center;
+            background-color: #f8fbff;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
 
-/* Glass Card System */
-.glass-card {
-  background: var(--bg-glass); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
-  border: 1px solid var(--border); border-radius: 20px; padding: 24px;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-}
+        .upload-area:hover {
+            background-color: #eef5ff;
+        }
 
-/* Drop Zone */
-.drop-zone {
-  border: 2px dashed var(--border); border-radius: 16px; padding: 60px 30px; text-align: center;
-  cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); position: relative;
-  background: rgba(255, 255, 255, 0.02);
-}
-.drop-zone:hover, .drop-zone.drag-over {
-  border-color: var(--accent); background: rgba(139, 92, 246, 0.05);
-  box-shadow: 0 0 30px var(--accent-glow) inset; transform: translateY(-2px);
-}
-.drop-zone input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
-.drop-icon { font-size: 48px; margin-bottom: 16px; display: inline-block; transition: 0.3s; }
-.drop-zone:hover .drop-icon { transform: scale(1.1); filter: drop-shadow(0 0 10px var(--accent)); }
-.drop-title { font-family: 'Outfit', sans-serif; font-size: 20px; font-weight: 700; margin-bottom: 8px; color: #fff; }
-.drop-sub { font-size: 13px; color: var(--muted); font-family: 'JetBrains Mono', monospace; }
+        .upload-area p {
+            margin: 10px 0 0 0;
+            font-weight: 500;
+            color: #0056b3;
+        }
 
-/* Panel Layout */
-#panel { display: none; animation: fadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
-@keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        /* File Input (Hidden) */
+        #fileInput {
+            display: none;
+        }
 
-.panel-grid { display: grid; grid-template-columns: 320px 1fr; gap: 24px; margin-bottom: 24px; }
-@media (max-width: 768px) { .panel-grid { grid-template-columns: 1fr; } }
+        /* Preview Section */
+        .preview-section {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
 
-/* Image Preview Card */
-.img-preview-wrap { border-radius: 16px; overflow: hidden; background: rgba(0,0,0,0.5); border: 1px solid var(--border); }
-.img-preview-wrap img { width: 100%; height: auto; max-height: 400px; object-fit: contain; display: block; background: rgba(0,0,0,0.3); }
-.img-meta { padding: 12px 16px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); border-top: 1px solid var(--border); }
-.run-btn {
-  width: 100%; margin-top: 12px; padding: 16px; border-radius: 12px;
-  background: linear-gradient(135deg, var(--accent), #6d28d9); border: none;
-  color: white; font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 700;
-  cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 10px;
-  box-shadow: 0 10px 20px var(--accent-glow);
-}
-.run-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 15px 25px var(--accent-glow); }
-.run-btn:disabled { background: var(--bg-glass); border: 1px solid var(--border); color: var(--muted); box-shadow: none; cursor: not-allowed; }
+        .preview-section img {
+            max-width: 100%;
+            max-height: 300px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
 
-/* Processing Phases */
-.phases { display: flex; flex-direction: column; gap: 12px; }
-.phase {
-  background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border); border-radius: 12px;
-  padding: 16px 20px; transition: all 0.3s; position: relative; overflow: hidden;
-}
-.phase::before {
-  content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: transparent; transition: 0.3s;
-}
-.phase.active { background: rgba(139, 92, 246, 0.05); border-color: rgba(139, 92, 246, 0.3); }
-.phase.active::before { background: var(--accent); box-shadow: 0 0 10px var(--accent); }
-.phase.done { border-color: var(--green-border); background: var(--green-bg); }
-.phase.done::before { background: var(--green); }
-.phase.errored { border-color: var(--red-border); background: var(--red-bg); }
-.phase.errored::before { background: var(--red); }
+        /* Buttons */
+        .btn {
+            background-color: #0056b3;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            margin-top: 10px;
+        }
 
-.ph-top { display: flex; align-items: center; justify-content: space-between; }
-.ph-label { font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 600; color: #fff; }
-.ph-status { font-family: 'JetBrains Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; }
-.phase.active .ph-status { color: var(--accent); }
-.phase.done .ph-status { color: var(--green); }
-.phase.errored .ph-status { color: var(--red); }
-.ph-desc { margin-top: 8px; font-size: 12px; color: var(--muted); line-height: 1.5; display: none; }
-.phase.active .ph-desc, .phase.done .ph-desc { display: block; animation: fadeUp 0.3s ease; }
+        .btn:hover {
+            background-color: #004494;
+        }
 
-/* Dashboard Results */
-.res-card {
-  animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.res-header {
-  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;
-  padding-bottom: 20px; border-bottom: 1px solid var(--border); margin-bottom: 24px;
-}
-.verdict-badge {
-  padding: 8px 24px; border-radius: 100px; font-family: 'Outfit', sans-serif; font-size: 18px; font-weight: 800;
-  display: inline-flex; align-items: center; gap: 10px; letter-spacing: 0.5px; text-transform: uppercase;
-}
-.verdict-badge.ai { background: var(--red-bg); color: var(--red); border: 1px solid var(--red-border); box-shadow: 0 0 20px rgba(239, 68, 68, 0.2); }
-.verdict-badge.real { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); box-shadow: 0 0 20px rgba(34, 197, 94, 0.2); }
-.verdict-badge.analyzing { background: rgba(139, 92, 246, 0.1); color: var(--accent); border: 1px solid rgba(139, 92, 246, 0.3); }
+        .btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
 
-.conf-wrap { flex: 1; min-width: 200px; max-width: 300px; }
-.conf-header { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); margin-bottom: 8px; }
-.conf-bar-bg { height: 6px; background: rgba(255, 255, 255, 0.05); border-radius: 10px; overflow: hidden; }
-.conf-bar-fill { height: 100%; border-radius: 10px; transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1); width: 0%; }
-.conf-bar-fill.ai { background: linear-gradient(90deg, #f87171, #dc2626); box-shadow: 0 0 10px #ef4444; }
-.conf-bar-fill.real { background: linear-gradient(90deg, #4ade80, #16a34a); box-shadow: 0 0 10px #22c55e; }
+        .btn-secondary {
+            background-color: #6c757d;
+            margin-left: 10px;
+        }
 
-/* Models Grid */
-.sec-title { font-family: 'Outfit', sans-serif; font-size: 14px; color: #fff; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
-.sec-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
-.models-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; margin-bottom: 24px; }
-.model-card {
-  background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border); border-radius: 12px; padding: 16px;
-  transition: 0.2s;
-}
-.model-card:hover { background: rgba(255, 255, 255, 0.04); border-color: var(--border-hover); }
-.mc-name { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); margin-bottom: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.mc-stats { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
-.mc-verdict { font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 700; }
-.mc-verdict.ai { color: var(--red); }
-.mc-verdict.real { color: var(--green); }
-.mc-verdict.na { color: var(--dim); }
-.mc-score { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #fff; }
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
 
-.summary-box {
-  background: rgba(139, 92, 246, 0.05); border: 1px solid rgba(139, 92, 246, 0.2);
-  border-left: 3px solid var(--accent); border-radius: 12px; padding: 20px;
-  font-size: 14px; color: #e4e4e7; line-height: 1.8;
-}
-.summary-box strong { color: #fff; font-weight: 600; }
+        /* Status and Results Area */
+        #statusMessage {
+            margin-top: 20px;
+            font-weight: bold;
+            color: #0056b3;
+            text-align: center;
+        }
 
-.reset-btn {
-  background: none; border: 1px solid var(--border); border-radius: 100px; padding: 10px 24px;
-  color: var(--muted); font-family: 'JetBrains Mono', monospace; font-size: 12px;
-  cursor: pointer; display: inline-flex; align-items: center; gap: 8px; margin-top: 24px;
-  transition: all 0.2s;
-}
-.reset-btn:hover { background: var(--text); color: var(--bg); border-color: var(--text); }
-.err-box { padding: 16px; background: var(--red-bg); border: 1px solid var(--red-border); border-radius: 12px; color: #fca5a5; font-family: 'JetBrains Mono', monospace; font-size: 13px; margin: 16px 0; }
+        #resultsArea {
+            display: none;
+            margin-top: 30px;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+        }
 
-/* Loader */
-.spin {
-  width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.2);
-  border-top-color: #fff; border-radius: 50%; animation: spin 0.8s linear infinite; display: inline-block;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
-</style>
+        /* Verdict Badges */
+        .verdict-box {
+            padding: 15px;
+            border-radius: 4px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .verdict-ai {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .verdict-human {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .verdict-unknown {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeeba;
+        }
+
+        /* Confidence Bar */
+        .progress-container {
+            width: 100%;
+            background-color: #e9ecef;
+            border-radius: 4px;
+            margin-top: 10px;
+            height: 20px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: #dc3545; /* Red for AI */
+            text-align: center;
+            line-height: 20px;
+            color: white;
+            font-size: 12px;
+            transition: width 0.5s ease-in-out;
+        }
+
+        .progress-bar.safe {
+            background-color: #28a745; /* Green for Human */
+        }
+
+        /* Detailed Models Table */
+        .details-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+
+        .details-table th, .details-table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+
+        .details-table th {
+            background-color: #f4f6f9;
+        }
+
+        .error-message {
+            color: #721c24;
+            background-color: #f8d7da;
+            padding: 15px;
+            border-radius: 4px;
+            border: 1px solid #f5c6cb;
+            margin-top: 20px;
+            display: none;
+        }
+    </style>
 </head>
 <body>
 
-<div class="mesh-bg">
-  <div class="blob blob-1"></div>
-  <div class="blob blob-2"></div>
-</div>
+    <!-- Main Application Header -->
+    <header>
+        <h1>AI Image Detection System</h1>
+    </header>
 
-<header>
-  <div class="logo">
-    <div class="logo-icon">🛡</div>
-    <div class="logo-text">
-      <h1>Reality Defender</h1>
-      <p>PRO FORENSICS</p>
-    </div>
-  </div>
-  <div class="status-pill">
-    <div class="dot" id="dot"></div>
-    <span id="srv-status">Connecting API...</span>
-  </div>
-</header>
-
-<main>
-  <div id="upload-wrap">
-    <div class="hero">
-      <div class="hero-badge">⚡ Advanced Multi-Model Architecture</div>
-      <h2>Detect the undetectable.</h2>
-      <p>Upload media to our enterprise-grade forensic engine. We run parallel deepfake detection models to verify authenticity with unparalleled accuracy.</p>
-    </div>
-
-    <div class="drop-zone glass-card" id="dz">
-      <input type="file" id="fi" accept="image/jpeg,image/png,image/gif,image/webp"/>
-      <div class="drop-icon">✨</div>
-      <div class="drop-title">Drop your image to scan</div>
-      <div class="drop-sub">JPEG, PNG, WebP or GIF up to 50MB</div>
-    </div>
-  </div>
-
-  <div id="panel">
-    <div class="panel-grid">
-      <div>
-        <div class="img-preview-wrap glass-card" style="padding:0">
-          <img id="prev" src="" alt="Preview"/>
-          <div class="img-meta" id="imeta">—</div>
+    <div class="container">
+        
+        <div class="instructions">
+            <p>Upload an image below to analyze it using our AI detection models. <br> The system will determine if the image is Human-Made or AI-Generated.</p>
         </div>
-        <button class="run-btn" id="runbtn">Initiate Deep Scan</button>
-      </div>
 
-      <div class="phases">
-        <div class="phase glass-card" id="ph1">
-          <div class="ph-top">
-            <div class="ph-label">1. Secure Uplink</div>
-            <div class="ph-status" id="ps1">Idle</div>
-          </div>
-          <div class="ph-desc">Establishing encrypted connection and transferring payload to Reality Defender servers...</div>
+        <!-- File Upload Section -->
+        <div id="uploadSection" class="upload-area" onclick="document.getElementById('fileInput').click()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="#0056b3" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+            <p>Click here to select an image</p>
+            <span style="font-size: 12px; color: #777;">(Supported formats: JPG, PNG, GIF, WebP)</span>
         </div>
-        <div class="phase glass-card" id="ph2">
-          <div class="ph-top">
-            <div class="ph-label">2. Parallel Execution</div>
-            <div class="ph-status" id="ps2">Idle</div>
-          </div>
-          <div class="ph-desc">Running artifact detection, diffusion classifiers, and biological triaging across 7 core models...</div>
+        <input type="file" id="fileInput" accept="image/jpeg, image/png, image/gif, image/webp">
+
+        <!-- Image Preview Section -->
+        <div id="previewSection" class="preview-section">
+            <img id="imagePreview" src="" alt="Selected Image Preview">
+            <p id="fileDetails" style="font-size: 14px; color: #555;"></p>
+            
+            <button id="analyzeButton" class="btn">Run Analysis</button>
+            <button id="resetButton" class="btn btn-secondary" style="display:none;">Upload Another Image</button>
         </div>
-        <div class="phase glass-card" id="ph3">
-          <div class="ph-top">
-            <div class="ph-label">3. Compiling Telemetry</div>
-            <div class="ph-status" id="ps3">Idle</div>
-          </div>
-          <div class="ph-desc">Aggregating confidence scores and normalizing final cryptographic verdict...</div>
+
+        <!-- Loading / Status Message -->
+        <div id="statusMessage"></div>
+        
+        <!-- Error Message Box -->
+        <div id="errorMessage" class="error-message"></div>
+
+        <!-- Analysis Results Section -->
+        <div id="resultsArea">
+            <h3 style="margin-top:0;">Analysis Results</h3>
+            
+            <div id="verdictBox" class="verdict-box">
+                <!-- Verdict will be injected here via Javascript -->
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <strong>Overall AI Probability Score:</strong>
+                <div class="progress-container">
+                    <div id="progressBar" class="progress-bar" style="width: 0%;">0%</div>
+                </div>
+            </div>
+
+            <p id="summaryText"></p>
+
+            <h4>Individual Model Breakdown</h4>
+            <table class="details-table">
+                <thead>
+                    <tr>
+                        <th>Detection Model</th>
+                        <th>Status</th>
+                        <th>AI Probability Score</th>
+                    </tr>
+                </thead>
+                <tbody id="modelsTableBody">
+                    <!-- Table rows injected via Javascript -->
+                </tbody>
+            </table>
         </div>
-      </div>
+
     </div>
 
-    <div id="err-area"></div>
-    <div id="res-area"></div>
-    <div style="text-align:center"><button class="reset-btn" onclick="reset()">← New Scan</button></div>
-  </div>
-</main>
+    <!-- Application Logic (Javascript) -->
+    <script>
+        // Check API health briefly
+        fetch('/api/health').catch(err => console.log("Backend check failed."));
 
-<script>
-// Backend health check
-(async()=>{
-  try {
-    const r = await fetch('/api/health');
-    const d = await r.json();
-    if(d.status === 'ok') {
-      document.getElementById('dot').classList.add('live');
-      document.getElementById('srv-status').textContent = 'API ONLINE';
-    }
-  } catch {
-    document.getElementById('srv-status').textContent = 'OFFLINE (NO BACKEND)';
-  }
-})();
+        // DOM Elements
+        const fileInput = document.getElementById('fileInput');
+        const uploadSection = document.getElementById('uploadSection');
+        const previewSection = document.getElementById('previewSection');
+        const imagePreview = document.getElementById('imagePreview');
+        const fileDetails = document.getElementById('fileDetails');
+        const analyzeButton = document.getElementById('analyzeButton');
+        const resetButton = document.getElementById('resetButton');
+        const statusMessage = document.getElementById('statusMessage');
+        const errorMessage = document.getElementById('errorMessage');
+        const resultsArea = document.getElementById('resultsArea');
+        const verdictBox = document.getElementById('verdictBox');
+        const progressBar = document.getElementById('progressBar');
+        const summaryText = document.getElementById('summaryText');
+        const modelsTableBody = document.getElementById('modelsTableBody');
 
-let file = null, busy = false;
-const dz = document.getElementById('dz');
-const fi = document.getElementById('fi');
-const runbtn = document.getElementById('runbtn');
+        // Global variable to store the selected file
+        let selectedFile = null;
 
-// Drag Events
-dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag-over'); });
-dz.addEventListener('dragleave', () => dz.classList.remove('drag-over'));
-dz.addEventListener('drop', e => { e.preventDefault(); dz.classList.remove('drag-over'); if(e.dataTransfer.files[0]) load(e.dataTransfer.files[0]); });
-fi.addEventListener('change', () => { if(fi.files[0]) load(fi.files[0]); });
+        // Handle Drag and Drop
+        uploadSection.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            uploadSection.style.backgroundColor = '#eef5ff';
+        });
+        
+        uploadSection.addEventListener('dragleave', function(e) {
+            uploadSection.style.backgroundColor = '#f8fbff';
+        });
+        
+        uploadSection.addEventListener('drop', function(e) {
+            e.preventDefault();
+            uploadSection.style.backgroundColor = '#f8fbff';
+            if (e.dataTransfer.files[0]) {
+                processFile(e.dataTransfer.files[0]);
+            }
+        });
 
-function load(f) {
-  const allowed = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-  if(!allowed.includes(f.type)) { alert('Invalid file type.'); return; }
-  file = f;
-  const reader = new FileReader();
-  reader.onload = e => {
-    document.getElementById('prev').src = e.target.result;
-    document.getElementById('imeta').textContent = `${f.name.substring(0,25)} • ${(f.size/1024).toFixed(1)} KB • ${f.type.split('/')[1].toUpperCase()}`;
-    document.getElementById('upload-wrap').style.display = 'none';
-    document.getElementById('panel').style.display = 'block';
-    document.getElementById('res-area').innerHTML = '';
-    document.getElementById('err-area').innerHTML = '';
-    [1,2,3].forEach(n => ph(n, 'idle', 'Idle'));
-  };
-  reader.readAsDataURL(f);
-}
+        // Handle File Selection via click
+        fileInput.addEventListener('change', function(event) {
+            if (event.target.files[0]) {
+                processFile(event.target.files[0]);
+            }
+        });
 
-function ph(n, state, txt) {
-  const card = document.getElementById('ph'+n);
-  const st = document.getElementById('ps'+n);
-  card.className = 'phase glass-card ' + (state !== 'idle' ? state : '');
-  st.innerHTML = state === 'active' ? '<span class="spin"></span>' : txt;
-}
+        // Function to process the selected file
+        function processFile(file) {
+            // Verify the file type
+            const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+            if (!validTypes.includes(file.type)) {
+                alert("Please select a valid image file (JPG, PNG, GIF, WebP).");
+                return;
+            }
 
-runbtn.addEventListener('click', () => { if(!file || busy) return; analyze(); });
+            selectedFile = file;
 
-async function analyze() {
-  busy = true; runbtn.disabled = true; runbtn.innerHTML = '<span class="spin"></span> Running...';
-  document.getElementById('err-area').innerHTML = ''; document.getElementById('res-area').innerHTML = '';
+            // Show the image preview
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                imagePreview.src = e.target.result;
+                
+                // Calculate file size in KB
+                const sizeKB = (file.size / 1024).toFixed(1);
+                fileDetails.textContent = \`Filename: \${file.name} | Size: \${sizeKB} KB\`;
+                
+                // Update UI state
+                uploadSection.style.display = 'none';
+                previewSection.style.display = 'block';
+                resultsArea.style.display = 'none';
+                errorMessage.style.display = 'none';
+                analyzeButton.style.display = 'inline-block';
+                resetButton.style.display = 'none';
+                statusMessage.textContent = '';
+            };
+            reader.readAsDataURL(file);
+        }
 
-  ph(1, 'active'); ph(2, 'idle', 'Waiting'); ph(3, 'idle', 'Waiting');
-  await new Promise(r => setTimeout(r, 400));
-  ph(1, 'done', 'Verified'); ph(2, 'active');
-  await new Promise(r => setTimeout(r, 600));
-  ph(2, 'done', 'Complete'); ph(3, 'active');
+        // Handle Analyze Button Click
+        analyzeButton.addEventListener('click', async function() {
+            if (!selectedFile) {
+                alert("No file selected.");
+                return;
+            }
 
-  try {
-    const fd = new FormData(); fd.append('image', file);
-    const resp = await fetch('/api/analyze', { method: 'POST', body: fd });
-    
-    // Check if response is HTML (GitHub Pages 404 error scenario)
-    const contentType = resp.headers.get("content-type");
-    if (contentType && contentType.includes("text/html")) {
-        throw new Error("Backend offline. GitHub Pages is returning a 404 HTML page instead of JSON API data.");
-    }
+            // Prepare the UI for loading
+            analyzeButton.disabled = true;
+            analyzeButton.textContent = "Processing...";
+            statusMessage.textContent = "Sending image to the detection server... Please wait.";
+            errorMessage.style.display = 'none';
+            resultsArea.style.display = 'none';
 
-    const data = await resp.json();
-    if(!resp.ok || data.error) throw new Error(data.error || 'Unknown error');
+            // Create form data to send to the backend
+            const formData = new FormData();
+            formData.append('image', selectedFile);
 
-    ph(3, 'done', 'Finalized');
-    render(data);
-  } catch(e) {
-    ph(3, 'errored', 'Failed');
-    document.getElementById('err-area').innerHTML = `<div class="err-box">⚠ Analysis Failed: ${e.message}</div>`;
-  }
-  busy = false; runbtn.disabled = false; runbtn.innerHTML = 'Initiate Deep Scan';
-}
+            try {
+                // Send POST request to our local Express server
+                const response = await fetch('/api/analyze', {
+                    method: 'POST',
+                    body: formData
+                });
 
-function render(d) {
-  const isAI = d.verdict === 'AI_GENERATED';
-  const isReal = d.verdict === 'REAL';
-  const vc = isAI ? 'ai' : isReal ? 'real' : 'analyzing';
-  const vl = isAI ? '⚠ SYNTHETIC MEDIA DETECTED' : isReal ? '✓ HUMAN MADE' : '⚠ UNCERTAIN';
-  const conf = d.confidence ?? 0;
+                // Handle GitHub Pages error specifically (it returns an HTML 404 page)
+                const contentType = response.headers.get("content-type");
+                if (contentType && contentType.includes("text/html")) {
+                    throw new Error("Cannot connect to backend server. Make sure the Node.js server is running.");
+                }
 
-  const modelCards = (d.models || []).map(m => {
-    const ms = m.status === 'MANIPULATED' || m.status === 'FAKE' ? 'ai' : m.status === 'REAL' ? 'real' : 'na';
-    const ml = ms === 'ai' ? 'DETECTED' : ms === 'real' ? 'CLEAN' : 'N/A';
-    return `<div class="model-card">
-      <div class="mc-name">${m.name}</div>
-      <div class="mc-stats">
-        <span class="mc-verdict ${ms}">${ml}</span>
-        <span class="mc-score">${m.score != null ? m.score + '%' : '—'}</span>
-      </div>
-      <div class="conf-bar-bg" style="height:4px"><div class="conf-bar-fill ${ms}" style="width:${m.score||0}%"></div></div>
-    </div>`;
-  }).join('');
+                const data = await response.json();
 
-  const summary = isAI ? `Forensic analysis indicates this media was generated or heavily manipulated by an AI model. Confidence score is critically high at <strong>${conf}%</strong>.` : isReal ? `Our models found no trace of generative AI manipulation. The artifact structure is consistent with a human-made capture.` : `Results are mixed or inconclusive. Manual review is recommended.`;
+                // Check for server-side errors
+                if (!response.ok || data.error) {
+                    throw new Error(data.error || "An unknown error occurred during analysis.");
+                }
 
-  document.getElementById('res-area').innerHTML = `
-  <div class="glass-card res-card">
-    <div class="res-header">
-      <div class="verdict-badge ${vc}">${vl}</div>
-      <div class="conf-wrap">
-        <div class="conf-header"><span>SYNTHETIC PROBABILITY</span><span>${conf}%</span></div>
-        <div class="conf-bar-bg"><div class="conf-bar-fill ${vc}" id="cf" style="width:0%"></div></div>
-      </div>
-    </div>
-    <div class="sec-title">MODEL TELEMETRY</div>
-    <div class="models-grid">${modelCards || '<div style="color:var(--muted);font-size:12px">No model breakdown available.</div>'}</div>
-    <div class="summary-box"><strong>EXECUTIVE SUMMARY:</strong><br>${summary}</div>
-  </div>`;
+                // If successful, render the data
+                displayResults(data);
 
-  setTimeout(() => { const cf = document.getElementById('cf'); if(cf) cf.style.width = conf + '%'; }, 100);
-}
+            } catch (error) {
+                // Handle any network or parsing errors
+                errorMessage.textContent = "Error: " + error.message;
+                errorMessage.style.display = 'block';
+            } finally {
+                // Reset button state
+                analyzeButton.style.display = 'none';
+                resetButton.style.display = 'inline-block';
+                statusMessage.textContent = "";
+                analyzeButton.disabled = false;
+                analyzeButton.textContent = "Run Analysis";
+            }
+        });
 
-function reset() {
-  file = null; busy = false;
-  document.getElementById('panel').style.display = 'none';
-  document.getElementById('upload-wrap').style.display = 'block';
-  document.getElementById('res-area').innerHTML = '';
-  document.getElementById('err-area').innerHTML = '';
-  fi.value = '';
-}
-</script>
+        // Handle Reset Button Click
+        resetButton.addEventListener('click', function() {
+            selectedFile = null;
+            fileInput.value = "";
+            uploadSection.style.display = 'block';
+            previewSection.style.display = 'none';
+            resultsArea.style.display = 'none';
+            errorMessage.style.display = 'none';
+            statusMessage.textContent = "";
+        });
+
+        // Function to render the JSON data into the HTML UI
+        function displayResults(data) {
+            // Unpack the data
+            const verdict = data.verdict; // 'AI_GENERATED', 'REAL', or 'UNCERTAIN'
+            let confidence = data.confidence;
+            if (confidence === null || confidence === undefined) {
+                confidence = 0;
+            }
+            
+            const models = data.models || [];
+
+            // 1. Setup the main Verdict Box
+            if (verdict === 'AI_GENERATED') {
+                verdictBox.textContent = "⚠ WARNING: SYNTHETIC MEDIA DETECTED";
+                verdictBox.className = "verdict-box verdict-ai";
+                
+                progressBar.className = "progress-bar"; // Red color
+                
+                summaryText.innerHTML = \`Based on our forensic analysis, this image was likely generated or manipulated by AI. <br> The system calculates a <strong>\${confidence}%</strong> probability of it being synthetic.\`;
+            
+            } else if (verdict === 'REAL') {
+                verdictBox.textContent = "✓ HUMAN MADE (AUTHENTIC)";
+                verdictBox.className = "verdict-box verdict-human";
+                
+                progressBar.className = "progress-bar safe"; // Green color
+                
+                summaryText.innerHTML = \`Our models found no major signs of AI manipulation. <br> The artifact structure is consistent with a standard, human-made photograph.\`;
+            
+            } else {
+                verdictBox.textContent = "⚠ UNCERTAIN RESULTS";
+                verdictBox.className = "verdict-box verdict-unknown";
+                
+                progressBar.className = "progress-bar"; // Red color
+                
+                summaryText.innerHTML = "The models returned mixed results. Please review the individual model scores below.";
+            }
+
+            // 2. Animate the Progress Bar
+            progressBar.style.width = confidence + "%";
+            progressBar.textContent = confidence + "%";
+
+            // 3. Populate the Detailed Models Table
+            modelsTableBody.innerHTML = ""; // Clear old rows
+            
+            if (models.length === 0) {
+                const tr = document.createElement('tr');
+                tr.innerHTML = \`<td colspan="3" style="text-align:center;">No individual model data available.</td>\`;
+                modelsTableBody.appendChild(tr);
+            } else {
+                for (let i = 0; i < models.length; i++) {
+                    const model = models[i];
+                    
+                    // Determine the display status for this row
+                    let statusText = "N/A";
+                    if (model.status === "MANIPULATED" || model.status === "FAKE") {
+                        statusText = "Detected (AI)";
+                    } else if (model.status === "REAL") {
+                        statusText = "Clean (Human)";
+                    }
+                    
+                    // Format the score
+                    const scoreText = model.score !== null ? model.score + "%" : "—";
+
+                    // Determine color for the status text
+                    const statusColor = (statusText === 'Detected (AI)') ? '#d9534f' : '#5cb85c';
+
+                    // Create the row
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = \`
+                        <td>\${model.name}</td>
+                        <td style="font-weight: bold; color: \${statusColor}">\${statusText}</td>
+                        <td>\${scoreText}</td>
+                    \`;
+                    modelsTableBody.appendChild(tr);
+                }
+            }
+
+            // Finally, display the results area
+            resultsArea.style.display = 'block';
+        }
+    </script>
 </body>
 </html>
