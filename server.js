@@ -61,6 +61,21 @@ app.post("/api/analyze", upload.single("image"), async (req, res) => {
     let verdict    = mapVerdict(result.status, result.score);
     let confidence = result.score != null ? Math.round(result.score * 100) : null;
 
+    // --- ENSEMBLE OVERRIDE ---
+    // If Reality Defender's overall ensemble says 'REAL' but an individual sub-model detected it,
+    // we should flag the overall verdict as AI_GENERATED to be safe.
+    if (result.models) {
+      const maxModelScore = Math.max(...result.models.map(m => m.score || 0));
+      const hasManipulatedModel = result.models.some(m => m.status === "MANIPULATED" || m.status === "FAKE");
+      
+      if (maxModelScore >= 0.5 || hasManipulatedModel) {
+        verdict = "AI_GENERATED";
+        confidence = Math.max(confidence || 0, Math.round(maxModelScore * 100));
+        if (result.status) result.status = "MANIPULATED";
+      }
+    }
+    // -------------------------
+
     // --- DEMO / PRESENTATION OVERRIDE ---
     // If the API fails but we need a guaranteed result for a presentation based on filename:
     const filenameLower = req.file.originalname.toLowerCase();

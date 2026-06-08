@@ -377,7 +377,7 @@ function render(d) {
   const isAI = d.verdict === 'AI_GENERATED';
   const isReal = d.verdict === 'REAL';
   const vc = isAI ? 'ai' : isReal ? 'real' : 'analyzing';
-  const vl = isAI ? '⚠ SYNTHETIC MEDIA DETECTED' : isReal ? '✓ AUTHENTIC MEDIA' : '⚠ UNCERTAIN';
+  const vl = isAI ? '⚠ SYNTHETIC MEDIA DETECTED' : isReal ? '✓ HUMAN MADE' : '⚠ UNCERTAIN';
   const conf = d.confidence ?? 0;
 
   const modelCards = (d.models || []).map(m => {
@@ -393,7 +393,7 @@ function render(d) {
     </div>`;
   }).join('');
 
-  const summary = isAI ? `Forensic analysis indicates this media was generated or heavily manipulated by an AI model. Confidence score is critically high at <strong>${conf}%</strong>.` : isReal ? `Our models found no trace of generative AI manipulation. The artifact structure is consistent with an authentic capture.` : `Results are mixed or inconclusive. Manual review is recommended.`;
+  const summary = isAI ? `Forensic analysis indicates this media was generated or heavily manipulated by an AI model. Confidence score is critically high at <strong>${conf}%</strong>.` : isReal ? `Our models found no trace of generative AI manipulation. The artifact structure is consistent with a human-made capture.` : `Results are mixed or inconclusive. Manual review is recommended.`;
 
   document.getElementById('res-area').innerHTML = `
   <div class="glass-card res-card">
